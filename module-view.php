@@ -46,7 +46,7 @@ $material = mysqli_query($con, "SELECT * FROM `materials` INNER JOIN `modules` O
                 // In order for the QR code to be scanned properly on other devices:
                     // 1) The scannign device should be connected to the same network as the virtual server
                     //2) The IPv4 address in the string below 'serverClientIP' is to be changed to the client's own static IPv4 address
-                var serverClientIP = '192.168.100.59';
+                var serverClientIP = '192.168.1.1';
                 var assessment = `http://${serverClientIP}/Beyond%20the%20Classroom/student/qr-self-assessment.html?module_id=${module_id}&id=${id}&type=${userType}`;
                 var encodedAssessmentURL = encodeURIComponent(assessment);
                 img.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodedAssessmentURL}`;
