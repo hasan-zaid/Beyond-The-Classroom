@@ -1,0 +1,17 @@
+main {
+    margin: 50px 100px;
+}
+
+main hr {
+    border: none;
+    width: 80px;
+    height: 5px;
+
+    background-color: rgb(247,101,64);
+}
+
+@media only screen and (max-width: 768px) {
+    main {
+        margin: 50px 20px;
+    }
+}

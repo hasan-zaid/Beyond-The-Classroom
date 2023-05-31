@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Beyond The Classroom</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="../style/global-styles.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+        var accountStatus = 'all';
+        var users;
+        var userType = 'student';
+        var selectedRow = null;
+        getAccounts('students');
+
+        $('document').ready(function() {
+          
+          if(!(sessionStorage.getItem('userType') === 'admin')) {
+            alert("You don't have permission to access this page");
+            removeSessionData();
+            window.location.replace('../');
+          }
+
+          $('#list-student').click(function() {
+            getAccounts('students');
+            userType = 'student';
+            $('#header').text("Students List");
+          });
+
+        $('#list-tutor').click(function() {
+            getAccounts('tutors');
+            userType = 'tutor';
+            $('#header').text("Tutors List");
+          });
+
+        $("#active").on("click", "tbody tr", function() {
+          $('#active tr.selected').removeClass('selected');
+          $(this).addClass('selected');
+          selectedRow = $(this);
+        });
+
+        $("#suspended").on("click", "tbody tr", function() {
+          $('#suspended tr.selected').removeClass('selected');
+          $(this).addClass('selected');
+          selectedRow = $(this);
+        });
+
+        $("#suspend").click(function() {
+          if (selectedRow) {
+            selectedRow.remove();
+            suspendAccount(selectedRow.children().first().text());
+            selectedRow = null;
+          } else {
+            $('#errorMessageActive').text("Please select an account to suspend it.");
+          }
+        });
+
+        $("#activate").click(function() {
+          if (selectedRow) {
+            selectedRow.remove();
+            activateAccount(selectedRow.children().first().text());
+            selectedRow = null;
+          } else {
+            $('#errorMessageSuspended').text("Please select an account to activate it.");
+          }
+        });
+
+
+      });
+
+      function activateAccount(id) {
+        $('#errorMessageSuspended').text("");
+        $.ajax ({
+          url: '../php/manage-accounts.php',
+          type: 'post',
+          data: {
+            "activate": 1,
+            "id": id,
+            "user": userType
+          },
+          success: function(data) {
+            alert(data);
+          },
+          error: function(err) {
+            console.log('Error:', err);
+          }   
+        });
+      }
+
+      function suspendAccount(id) {
+        $('#errorMessageActive').text("");
+        $.ajax ({
+          url: '../php/manage-accounts.php',
+          type: 'post',
+          data: {
+            "suspend": 1,
+            "id": id,
+            "user": userType
+          },
+          success: function(data) {
+            alert(data);
+          },
+          error: function(err) {
+            console.log('Error:', err);
+          }   
+        });
+      }
+
+        function getAccounts(userType) {
+          if(userType === 'students')
+          {
+            $.ajax ({
+                  url: '../php/list-users.php',
+                  type: 'get',
+                  data: {
+                      "students": 1,
+                  },
+                  success: function(data) {
+                    users = JSON.parse(data);
+                    insertToTable();
+                  },
+                  error: function(err) {
+                  console.log('Error:', err);
+                  }   
+            });
+          }
+
+            else if(userType === 'tutors')
+            {
+            $.ajax ({
+                  url: '../php/list-users.php',
+                  type: 'get',
+                  data: {
+                      "tutors": 1,
+                  },
+                  success: function(data) {
+                    users = JSON.parse(data);
+                    insertToTable();
+                  },
+                  error: function(err) {
+                  console.log('Error:', err);
+                  }   
+            });
+        }
+      }
+    function insertToTable(condition = 'all') {
+          $('#all tbody').empty();
+          $('#active tbody').empty();
+          $('#suspended tbody').empty();
+          if(condition === 'active') {
+            $.each(users, function(i, user) {
+              if(user.status === '1') {
+                
+                var tblRow = "<tr>" + "<td>" + user.id + "</td>" + "<td>" + user.name + "</td>" + "<td>" + user.email + "</td>" + "</tr>";
+                $("#active tbody").append(tblRow);
+              }
+            });
+          }
+          else if(condition == 'suspended') {
+            $.each(users, function(i, user) {
+              if(user.status === '0') {
+                var tblRow = "<tr>" + "<td>" + user.id + "</td>" + "<td>" + user.name + "</td>" + "<td>" + user.email + "</td>" + "</tr>";
+                $("#suspended tbody").append(tblRow);
+              }
+            });
+          }
+          else {
+            $.each(users, function(i, user) {
+              var tblRow = "<tr>" + "<td>" + user.id + "</td>" + "<td>" + user.name + "</td>" + "<td>" + user.email + "</td>" + "</tr>";
+              $("#all tbody").append(tblRow);
+            });
+          }
+        }
+
+        function removeSessionData() {
+                sessionStorage.clear();
+                window.location.replace('../');
+            }
+  </script>
+</head>
+<body>
+  <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-1   mb-4 border-bottom header ">
+    <div class="col-md-3 mb-2 mb-md-0 side-margin">
+      <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
+        <img class="icon-image" src="../images/logo.png">
+      </a>
+    </div>
+
+    <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+      <li><a href="../" class="nav-link px-2">Home</a></li>
+            <li><a href="../modules.html" class="nav-link px-2">Modules</a></li>
+            <li><a href="../about-us.html" class="nav-link px-2">About Us</a></li>
+            <li><a href="../faq.html" class="nav-link px-2">FAQs</a></li>
+    </ul>
+
+    <div class="col-md-3 text-end side-margin">
+        <button type="button" class="btn btn-primary" onclick="window.location.href = 'register-tutor-account.html'">Register Tutor</button>
+        <button type="button" class="btn btn-primary" onclick="window.location.href = '../update-profile.html'">Edit Profile</button>
+        <button type="button" class="btn btn-outline-primary" onclick="removeSessionData()">Logout</button>
+    </div>
+  </header>
+
+  <h2 class="center-element" id="header">Students List</h2>
+
+  <br>
+  
+  <div class="center-element">
+    <b>Choose User Type: </b>
+    <button class="side-margin main-button" id="list-student">Students</button>
+    <button class="side-margin main-button" id="list-tutor">Tutors</button>
+  </div>
+
+  <br>
+
+<div class="center-element">
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all-tab-pane" type="button" role="tab" aria-controls="all-tab-pane" aria-selected="true"  onclick="insertToTable()">All</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="active-tab" data-bs-toggle="tab" data-bs-target="#active-tab-pane" type="button" role="tab" aria-controls="active-tab-pane" aria-selected="false" onclick="insertToTable('active')">Active</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="suspended-tab" data-bs-toggle="tab" data-bs-target="#suspended-tab-pane" type="button" role="tab" aria-controls="suspended-tab-pane" aria-selected="false"  onclick="insertToTable('suspended')">Suspended</button>
+      </li>
+  </ul>
+</div>
+
+  <div class="tab-content center-element" id="myTabContent">
+    <div class="tab-pane fade show active" id="all-tab-pane" role="tabpanel" aria-labelledby="all-tab" tabindex="0">
+      <table id="all" class="table">
+        <thead>
+          <tr>
+            <th style="width:50px">ID</th>
+            <th style="width:300px">Name</th>
+            <th style="width:300px">Email</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+    <div class="tab-pane fade" id="active-tab-pane" role="tabpanel" aria-labelledby="active-tab" tabindex="0">
+      <table id="active" class="table table-hover">
+        <thead>
+          <tr>
+            <th style="width:50px">ID</th>
+            <th style="width:300px">Name</th>
+            <th style="width:300px">Email</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+      <div class="center-element">
+        <button class="btn btn-warning top-margin" id="suspend">Suspend Account</button>
+      </div>
+      <h4 class="center-element text-warning top-margin" id="errorMessageActive"></h4>
+    </div>
+    <div class="tab-pane fade" id="suspended-tab-pane" role="tabpanel" aria-labelledby="suspended-tab" tabindex="0">
+      <table id="suspended" class="table table-hover">
+        <thead>
+          <tr>
+            <th style="width:50px">ID</th>
+            <th style="width:300px">Name</th>
+            <th style="width:300px">Email</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+      <div class="center-element">
+        <button class="btn btn-warning top-margin" id="activate">Activate Account</button>
+      </div>
+      <h4 class="center-element text-warning top-margin" id="errorMessageSuspended"></h4>
+    </div>
+  </div>
+
+  <footer class="bg-light text-center text-lg-start">
+    <div class="container p-4">
+        <div class="row">
+            <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                <h5 class="text-uppercase">About Us</h5>
+                <p> Beyond the Classroom is an innovative e-learning platform that brings education directly to your fingertips. We believe that learning should not be confined to traditional classrooms, and our goal is to provide accessible and engaging online courses for students of all ages. </p>
+            </div>
+            <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                <h5 class="text-uppercase">Our Mission</h5>
+                <p> Our mission is to revolutionize the way education is delivered by harnessing the power of technology. We aim to make learning more convenient, flexible, and personalized for every learner, regardless of their location or schedule. We strive to create a supportive and inclusive learning environment where students can thrive and reach their full potential. </p>
+            </div>
+        </div>
+    </div>
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);"> © 2023 Copyright: <a class="text-dark" href="../about-us.html">Beyond The Classroom</a> </div>
+</footer>
+</body>
+</html>

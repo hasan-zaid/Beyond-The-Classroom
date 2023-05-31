@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Self-assessment</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="../style/global-styles.css">
+  <link rel="stylesheet" type="text/css" href="../style/add-self-assessment.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+
+  <script>
+    $('document').ready(function() {
+
+      if(!(sessionStorage.getItem('userType') === 'tutor')) {
+          alert("You don't have permission to access this page");
+          removeSessionData();
+          window.location.replace('../');
+      }
+
+      let params = new URLSearchParams(window.location.search);
+      let myParam = params.get('mid');
+
+      // check whether an assessment already exists for this module
+      $.ajax({
+        url: '../php/add-self-assessment.php',
+        type: 'POST',
+        data: {
+          'check': 1,
+          'module_id': myParam,
+        },
+        success: function(data)
+        {
+          if(data == 1)
+          {
+            alert('An assessment already exists for this module!');
+            window.location.href = './';
+          }
+        }
+      });
+
+      document.getElementById('questionForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        publishAssessment.call(this);
+      });
+  
+      var questions = [];
+  
+      function publishAssessment() {
+        var questionContainers = document.getElementsByClassName("question-container");
+
+        for (var i = 0; i < questionContainers.length; i++) {
+            var questionContainer = questionContainers[i];
+            var questionText = questionContainer.querySelector(".form-control").value;
+            var choicesContainer = questionContainer.querySelector(".choices-container");
+            var choiceInputs = choicesContainer.querySelectorAll(".form-check-input");
+            var choices = [];
+            var correctAnswer = "";
+
+            for (var j = 0; j < choiceInputs.length; j++) {
+                var choiceInput = choiceInputs[j];
+                var choiceText = choicesContainer.querySelector("#" + choiceInput.id + "Text").value;
+                choices.push(choiceText);
+
+                if (choiceInput.checked) {
+                    correctAnswer = choiceText;
+                }
+            }
+
+            var choicesString = choices.join(","); // Convert choices array to a single string
+
+            questions.push({
+                questionText: questionText,
+                choices: choicesString, // Store choices as a single string
+                correctAnswer: correctAnswer
+            });
+        }
+  
+        var questionsJSON = JSON.stringify(questions);
+        $.ajax({
+          url: '../php/add-self-assessment.php',
+          type: 'POST',
+          data: {
+            'module_id': myParam,
+            'addAssessment': 1,
+            'assessment': questionsJSON
+          }, // Send as a named parameter
+          success: function(data) {
+            alert(data);
+            window.location.replace('./');
+          }
+        });
+  
+
+      }
+
+      $("#cancelBtn").click(function() {
+        window.location.href = './';
+      });
+    });
+
+    function removeSessionData() {
+                sessionStorage.clear();
+                window.location.replace('../');
+            }
+  </script>
+  
+
+</head>
+<body>
+  <header
+  class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-1 mb-4 border-bottom header ">
+  <div class="col-md-3 mb-2 mb-md-0 side-margin"> <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
+          <img class="icon-image" src="../images/logo.png"> </a> </div>
+  <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+      <li><a href="../" class="nav-link px-2">Home</a></li>
+      <li><a href="../modules.html" class="nav-link px-2">Modules</a></li>
+      <li><a href="../about-us.html" class="nav-link px-2">About Us</a></li>
+      <li><a href="../faq.html" class="nav-link px-2">FAQs</a></li>
+  </ul>
+  <div class="col-md-3 text-end side-margin"> <button type="button" class="btn btn-outline-primary" onclick="removeSessionData()">Logout</button> </div>
+</header>
+  <h1>Add Self-assessment</h1>
+
+
+
+  <div class="row">
+  <div class="col-4">
+    <div id="list-example" class="list-group">
+
+    </div>
+  </div>
+</div>
+
+<div class="container text-center">
+    <div class="question-container">
+      <h3>Question 1</h3>
+        <form id="questionForm">
+      <input type="text" class="form-control" placeholder="Enter question here" maxlength="255" required>
+      <div class="choices-container">
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="question1Choice" id="question1Choice1" required>
+          <input class="form" type="text" name="question1ChoiceText" id="question1Choice1Text" placeholder="Option 1" maxlength="255" required>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="question1Choice" id="question1Choice2">
+          <input class="form" type="text" name="question1ChoiceText" id="question1Choice2Text" placeholder="Option 2" maxlength="255" required>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="question1Choice" id="question1Choice3">
+          <input class="form" type="text" name="question1ChoiceText" id="question1Choice3Text" placeholder="Option 3" maxlength="255" required>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="question1Choice" id="question1Choice4">
+          <input class="form" type="text" name="question1ChoiceText" id="question1Choice4Text" placeholder="Option 4" maxlength="255" required>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="btn btn-primary" id="addQuestionBtn">Add Question</button>
+
+    <div class="row">
+      <div class="col">
+        <button type="button" class="btn btn-danger" id="cancelBtn">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="publishBtn">Publish</button>
+      </div>
+    </div>
+        </form>
+
+  </div>
+
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <script>
+    document.getElementById("addQuestionBtn").addEventListener("click", function () {
+        var questionCount = document.getElementsByClassName("question-container").length;
+
+        var newQuestionContainer = document.createElement("div");
+        newQuestionContainer.className = "question-container";
+        newQuestionContainer.innerHTML = `
+        <h3>Question ${questionCount + 1}</h3>
+        <input type="text" class="form-control" placeholder="Enter question here" maxlength="255" required>
+        <div class="choices-container">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="question${questionCount + 1}Choice" id="question${questionCount + 1}Choice1" required>
+                <input class="form" type="text" name="question${questionCount + 1}ChoiceText" id="question${questionCount + 1}Choice1Text" placeholder="Option 1" maxlength="255" required>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="question${questionCount + 1}Choice" id="question${questionCount + 1}Choice2">
+                <input class="form" type="text" name="question${questionCount + 1}ChoiceText" id="question${questionCount + 1}Choice2Text" placeholder="Option 2" maxlength="255" required>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="question${questionCount + 1}Choice" id="question${questionCount + 1}Choice3">
+                <input class="form" type="text" name="question${questionCount + 1}ChoiceText" id="question${questionCount + 1}Choice3Text" placeholder="Option 3" maxlength="255" required>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="question${questionCount + 1}Choice" id="question${questionCount + 1}Choice4">
+                <input class="form" type="text" name="question${questionCount + 1}ChoiceText" id="question${questionCount + 1}Choice4Text" placeholder="Option 4" maxlength="255" required>
+            </div>
+        </div>
+        `;
+
+        var form = document.getElementById("questionForm");
+        if (questionCount > 0) {
+            var lastQuestionContainer = form.getElementsByClassName("question-container")[questionCount - 1];
+            // insert the new question container after the last question-container
+            $('#questionForm').append(newQuestionContainer);
+        } else {
+            // If it's the first question being added, just append it to the form
+            form.appendChild(newQuestionContainer);
+        }
+    });
+
+    // The rest of your existing JavaScript code
+</script>
+
+
+<footer class="bg-light text-center text-lg-start">
+  <div class="container p-4">
+      <div class="row">
+          <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+              <h5 class="text-uppercase">About Us</h5>
+              <p> Beyond the Classroom is an innovative e-learning platform that brings education directly to your fingertips. We believe that learning should not be confined to traditional classrooms, and our goal is to provide accessible and engaging online courses for students of all ages. </p>
+          </div>
+          <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+              <h5 class="text-uppercase">Our Mission</h5>
+              <p> Our mission is to revolutionize the way education is delivered by harnessing the power of technology. We aim to make learning more convenient, flexible, and personalized for every learner, regardless of their location or schedule. We strive to create a supportive and inclusive learning environment where students can thrive and reach their full potential. </p>
+          </div>
+      </div>
+  </div>
+  <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);"> © 2023 Copyright: <a class="text-dark" href="../about-us.html">Beyond The Classroom</a> </div>
+</footer>
+  </body>
+</html>

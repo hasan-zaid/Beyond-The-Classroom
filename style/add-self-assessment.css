@@ -1,0 +1,54 @@
+.container {
+    background-color: #cccccc;
+    color: #000000;
+    padding: 20px;
+    margin-top: 50px;
+  }
+  
+  h1 {
+    -webkit-text-decoration-skip: ink;
+    font-size: 36px;
+    font-weight: bold;
+    text-align: center;
+    margin: 30px 0;
+  }
+  
+  .question-container {
+    margin-bottom: 20px;
+  }
+  
+  .question-container h3 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .question-container .form-control {
+    width: 100%;
+  }
+  
+  .question-container .choices-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  
+  .question-container .choices-container .form-check {
+    width: 50%;
+    margin-bottom: 5px; /* Added margin-bottom */
+  }
+  
+  .question-container .choices-container label {
+    display: flex;
+    align-items: center;
+  }
+  
+  .question-container .choices-container .form-check-input {
+    margin-right: 5px; /* Adjusted margin-right for spacing */
+  }
+  
+  #addQuestionBtn,
+  #cancelBtn,
+  #publishBtn {
+    margin-top: 10px;
+  }
+  

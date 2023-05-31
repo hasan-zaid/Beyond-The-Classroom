@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preparing Self Assessment</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+    <script>
+        $('document').ready(function() {
+            let params = new URLSearchParams(window.location.search);
+            let module_id = params.get('module_id');
+            let id = params.get('id');
+            let userType = params.get('type');
+            if(userType && id && module_id) {
+                sessionStorage.setItem("module_id", module_id);
+                sessionStorage.setItem("id", id);
+                sessionStorage.setItem("userType", userType);
+                window.location.replace('self-assessment.html');
+            }
+            else {
+                alert("You don't have permission to access this page");
+                sessionStorage.clear();
+                window.location.replace('../');
+            }           
+        });
+    </script>
+
+
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,130 @@
+
+
+/* Desktop Res */
+.banner {
+    padding: 0 50px;
+    background-color: #0083e8;
+
+    text-align: center;
+}
+
+.banner section {
+    display: inline-block;
+
+    vertical-align: middle;
+    text-align: left;
+}
+
+.banner section span {
+    font-family: Georgia, serif, Arial;
+    font-size: 72px;
+    font-weight: 700;
+    color: white;
+}
+
+.banner section .banner-btn {
+    background-image: linear-gradient(to bottom right, #e77c31, #fd8d23);
+    color: white;
+    text-decoration: none;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    padding: 15px 30px;
+    border-radius: 15px;
+}
+
+.course-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+
+    margin: 20px 0;
+}
+
+.course-box {
+    background-color:#0076ff;
+    color: white;
+    text-decoration: none;
+    width: 400px;
+    padding: 15px 30px;
+
+    border-radius: 10px;
+}
+
+.course-box img {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+
+    border-radius: 10px;
+}
+
+.course-box div {
+    margin: 10px 0;
+}
+
+.course-box div .tutor {
+    font-size: 12px;
+}
+
+.course-box div .info {
+    margin: 10px 0;
+    font-size: 18px;
+    font-family: 'Times New Roman', Times, serif;
+    text-overflow: ellipsis;
+}
+
+.vision {
+    margin: 0 120px;
+    font-size: 20px;
+}
+
+/* Mobile Res */
+@media only screen and (max-width: 768px) {
+    .banner {
+        padding: 0 50px;
+        background-color: #0083e8;
+
+        text-align: center;
+    }
+
+    .banner section {
+        display: inline-block;
+
+        vertical-align: middle;
+        text-align: left;
+    }
+
+    .banner section span {
+        font-family: Georgia, serif, Arial;
+        font-size: 44px;
+        font-weight: 700;
+        color: white;
+    }
+
+    .banner section .banner-btn {
+        background-image: linear-gradient(to bottom right, #e77c31, #fd8d23);
+        color: white;
+        text-decoration: none;
+
+        font-size: 16px;
+        font-weight: 700;
+
+        padding: 15px 30px;
+        border-radius: 15px;
+    }
+
+    .banner img {
+        padding: 20px 0;
+        width: 100%;
+    }
+
+    .vision {
+        margin: 0 20px;
+        font-size: 14px;
+    }
+}
