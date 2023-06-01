@@ -71,7 +71,7 @@ if (!$data) {
         </ul>
         
         <div class="col-md-3 text-end side-margin">
-        <button type="button" class="btn btn-primary" onclick="window.location.href = '../update-profile.html'">Edit Profile</button>
+        <button type="button" class="btn btn-primary side-margin" onclick="window.location.href = '../update-profile.html'">Edit Profile</button>
              <button type="button" class="btn btn-outline-primary" onclick="removeSessionData()">Logout</button>
         </div> 
     </header>
